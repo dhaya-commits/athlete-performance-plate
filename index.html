@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login — Smart Nutrition Analyst</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--accent:#2ea043;--accent-2:#7bd389;--muted:#527055;--card:#fff;--bg:#f7fbf6;--text:#123028}
+    html,body{height:100%;margin:0;font-family:Poppins,system-ui,Arial;background:
+      linear-gradient(180deg, rgba(255,255,255,0.85), rgba(243,250,240,0.85)),
+      url('WORKOUT LOGO.jpg') center/cover no-repeat fixed; color:var(--text)}
+    .center{max-width:420px;margin:48px auto;padding:22px}
+    .card{background:var(--card);border-radius:12px;padding:18px;border:1px solid rgba(34,139,75,0.06);box-shadow:0 12px 28px rgba(18,48,40,0.04)}
+    h1{font-family:Manrope, Poppins;margin:0 0 6px 0;font-size:20px}
+    p.lead{color:var(--muted);margin:0 0 16px 0;font-size:13px}
+    label{display:block;font-size:13px;color:var(--muted);margin:10px 0 6px}
+    input{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(34,139,75,0.12);background:#fbfff8;box-sizing:border-box}
+    .row{display:flex;gap:8px;align-items:center}
+    .btn{background:linear-gradient(180deg,var(--accent),var(--accent-2));color:white;border:none;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:600}
+    .link{display:inline-block;margin-top:12px;color:var(--accent);text-decoration:none}
+    .msg{margin-top:10px;color:var(--muted);font-size:13px}
+    .header-container{display:flex;align-items:center;gap:12px}
+    .avatar-wrapper{width:56px;height:56px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 18px rgba(18,48,40,0.06);background:linear-gradient(180deg,#fff,#f3faf0)}
+    .avatar-img{width:100%;height:100%;object-fit:cover;display:block}
+    .login-title{margin:0}
+    .login-subtitle{margin:4px 0 0}
+    .button-row{margin-top:12px;display:flex;justify-content:space-between;align-items:center}
+  </style>
+</head>
+<body>
+  <div class="center">
+    <div class="card">
+      <div class="header-container">
+        <div class="avatar-wrapper">
+          <img id="login-avatar" src="LOGIN LOGO.jpg" alt="avatar" class="avatar-img" />
+        </div>
+        <div>
+          <h1 class="login-title">Login</h1>
+          <p class="lead login-subtitle">Sign in to continue to Smart Nutrition Analyst</p>
+        </div>
+      </div>
+
+      <label for="username">Username</label>
+      <input id="username" autocomplete="username" />
+
+      <label for="password">Password</label>
+      <input id="password" type="password" autocomplete="current-password" />
+
+      <div class="button-row">
+        <button id="loginBtn" class="btn">Login</button>
+        <a class="link" href="signin.html">Create account</a>
+      </div>
+
+      <div id="msg" class="msg"></div>
+
+    </div>
+  </div>
+
+  <script>
+    // small client-side account system (localStorage)
+    function getUsers(){ try{ return JSON.parse(localStorage.getItem('nutri_users')||'{}'); }catch(e){ return {}; } }
+    function saveUsers(obj){ localStorage.setItem('nutri_users', JSON.stringify(obj)); }
+
+    document.getElementById('loginBtn').addEventListener('click', ()=>{
+      const u = document.getElementById('username').value.trim();
+      const p = document.getElementById('password').value;
+      const msg = document.getElementById('msg'); msg.textContent = '';
+      if(!u || !p){ msg.textContent = 'Enter username and password'; return; }
+      const users = getUsers();
+      if(!users[u]){ msg.textContent = 'No account found. Please create one.'; return; }
+      if(users[u].password !== p){ msg.textContent = 'Incorrect password'; return; }
+      // success -> redirect to Nutri page
+      msg.textContent = 'Login successful — redirecting...';
+      setTimeout(()=>{ window.location.href = 'Nutri page.html'; },700);
+    });
+
+    // allow Enter key
+    ['username','password'].forEach(id=>{
+      document.getElementById(id).addEventListener('keyup', (e)=>{ if(e.key === 'Enter') document.getElementById('loginBtn').click(); });
+    });
+
+    // fallback for login avatar
+    (function(){
+      const img = document.getElementById('login-avatar'); if(!img) return;
+      img.addEventListener('error', ()=>{
+        const svg = `data:image/svg+xml;utf8,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"><rect width="64" height="64" fill="none"/><g fill="%234caf50"><circle cx="32" cy="22" r="12"/><path d="M10 54c0-10 9-18 22-18s22 8 22 18v2H10v-2z"/></g></svg>')}`;
+        img.src = svg;
+      });
+    })();
+  </script>
+</body>
+</html>

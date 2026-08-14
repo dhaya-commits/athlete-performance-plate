@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sign In — Smart Nutrition Analyst</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--accent:#2ea043;--accent-2:#7bd389;--muted:#527055;--card:#fff;--bg:#f7fbf6;--text:#123028}
+    html,body{height:100%;margin:0;font-family:Poppins,system-ui,Arial;background:
+      linear-gradient(180deg, rgba(255,255,255,0.88), rgba(243,250,240,0.88)),
+      url('Nutrition logo.jpg') center/cover no-repeat fixed;color:var(--text)}
+    .center{max-width:520px;margin:48px auto;padding:22px}
+    .card{background:var(--card);border-radius:12px;padding:18px;border:1px solid rgba(34,139,75,0.06);box-shadow:0 12px 28px rgba(18,48,40,0.04)}
+    h1{font-family:Manrope, Poppins;margin:0 0 6px 0;font-size:20px}
+    p.lead{color:var(--muted);margin:0 0 16px 0;font-size:13px}
+    label{display:block;font-size:13px;color:var(--muted);margin:10px 0 6px}
+    input{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(34,139,75,0.12);background:#fbfff8;box-sizing:border-box}
+    .row{display:flex;gap:8px;align-items:center}
+    .btn{background:linear-gradient(180deg,var(--accent),var(--accent-2));color:white;border:none;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:600}
+    .link{display:inline-block;margin-top:12px;color:var(--accent);text-decoration:none}
+    .msg{margin-top:10px;color:var(--muted);font-size:13px}
+  </style>
+</head>
+<body>
+  <div class="center">
+    <div class="card">
+      <h1>Create account</h1>
+      <p class="lead">Create a username and password to save your meals & targets locally.</p>
+
+      <label for="new-username">Create Username</label>
+      <input id="new-username" autocomplete="username" />
+
+      <label for="new-password">Create Password</label>
+      <input id="new-password" type="password" autocomplete="new-password" />
+
+      <label for="email">Email ID</label>
+      <input id="email" type="email" autocomplete="email" />
+
+      <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
+        <button id="createBtn" class="btn">Create account</button>
+        <a class="link" href="index.html">Already have an account?</a>
+      </div>
+
+      <div id="msg" class="msg"></div>
+
+    </div>
+  </div>
+
+  <script>
+    function getUsers(){ try{ return JSON.parse(localStorage.getItem('nutri_users')||'{}'); }catch(e){ return {}; } }
+    function saveUsers(obj){ localStorage.setItem('nutri_users', JSON.stringify(obj)); }
+
+    document.getElementById('createBtn').addEventListener('click', ()=>{
+      const u = document.getElementById('new-username').value.trim();
+      const p = document.getElementById('new-password').value;
+      const e = document.getElementById('email').value.trim();
+      const msg = document.getElementById('msg'); msg.textContent = '';
+      if(!u || !p || !e){ msg.textContent = 'Fill all fields'; return; }
+      const users = getUsers();
+      if(users[u]){ msg.textContent = 'Username already taken'; return; }
+      users[u] = {password: p, email: e};
+      saveUsers(users);
+      msg.textContent = 'Account created — redirecting to login...';
+      setTimeout(()=>{ window.location.href = 'index.html'; },900);
+    });
+
+    ['new-username','new-password','email'].forEach(id=>{
+      document.getElementById(id).addEventListener('keyup', (ev)=>{ if(ev.key==='Enter') document.getElementById('createBtn').click(); });
+    });
+
+    // fallback if signin background image not present
+    (function(){
+      const img = new Image(); img.src = 'signin-bg.png';
+      img.onload = function(){ /* image exists, nothing to do */ };
+      img.onerror = function(){
+        // apply a lightweight inline SVG as background when the image is missing
+        const svg = encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400"><rect width="600" height="400" fill="#f7fbf6"/><g fill="#2ea043" opacity="0.06"><rect x="0" y="0" width="600" height="400"/></g></svg>');
+        document.documentElement.style.backgroundImage = `linear-gradient(180deg, rgba(255,255,255,0.88), rgba(243,250,240,0.88)), url("data:image/svg+xml;utf8,${svg}")`;
+        document.documentElement.style.backgroundSize = 'cover';
+        document.documentElement.style.backgroundRepeat = 'no-repeat';
+        document.documentElement.style.backgroundPosition = 'center';
+      };
+    })();
+  </script>
+</body>
+</html>
